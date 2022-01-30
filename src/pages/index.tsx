@@ -5,7 +5,7 @@ import { io } from "socket.io-client";
 import LoginPanel from "../components/LoginPanel";
 import isClient from "../utils/isClient";
 
-const s = io("ws://192.168.2.29:5656");
+const s = io("wss://parssa-dice-game.herokuapp.com");
 
 export default function Home() {
   const { game } = useGameState();
