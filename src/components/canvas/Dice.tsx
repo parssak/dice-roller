@@ -41,8 +41,7 @@ export default function Dice({
 
   useEffect(() => {
     socket.on("roll", (rolls: RollPayload[]) => {
-      console.debug("roll", rolls);
-      roll(rolls[index])
+      roll(rolls[index]);
     });
   }, []);
 
@@ -80,28 +79,6 @@ export default function Dice({
     return 3;
   };
 
-  // const roll = () => {
-  //   api.position.set(position[0], position[1], position[2]);
-  //   api.rotation.set(Math.random(), Math.random(), Math.random());
-
-  //   const magnitude = 30;
-  //   const torqueMagnitude = 200;
-
-  //   api.applyLocalImpulse(
-  //     [
-  //       Math.random() * magnitude - magnitude / 2,
-  //       Math.random() * magnitude - magnitude / 2,
-  //       Math.random() * magnitude - magnitude / 2,
-  //     ],
-  //     [Math.random() / 2, Math.random() / 2, Math.random() / 2]
-  //   );
-  //   api.applyTorque([
-  //     torqueMagnitude * Math.random() - torqueMagnitude / 2,
-  //     torqueMagnitude * Math.random() - torqueMagnitude / 2,
-  //     torqueMagnitude * Math.random() - torqueMagnitude / 2,
-  //   ]);
-  // };
-
   const roll = (rollPayload: RollPayload) => {
     api.position.set(rollPayload.position[0], rollPayload.position[1], rollPayload.position[2]);
     api.rotation.set(rollPayload.rotation[0], rollPayload.rotation[1], rollPayload.rotation[2]);
@@ -125,24 +102,8 @@ export default function Dice({
     }
   });
 
-  // add an event listener to roll() when spacebar is pressed
-  // useEffect(() => {
-  //   const rollOnClick = () => {
-  //     roll();
-  //   };
-  //   window.addEventListener("keydown", rollOnClick);
-  //   return () => {
-  //     window.removeEventListener("keydown", rollOnClick);
-  //   };
-  // }, []);
-
   return (
-    <mesh
-      ref={ref}
-      // onClick={(e) => {
-      //   roll();
-      // }}
-    >
+    <mesh ref={ref}>
       <boxBufferGeometry attach="geometry" />
       <meshToonMaterial map={texture_1} attachArray="material" />
       <meshToonMaterial map={texture_2} attachArray="material" />

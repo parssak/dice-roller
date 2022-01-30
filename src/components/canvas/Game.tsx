@@ -46,12 +46,6 @@ export default function Game({ socket }: Props) {
     socket.emit("roll", [dice_one, dice_two, dice_three]);
   };
 
-  // useEffect(() => {
-  //   socket.on("roll", (rolls: RollPayload[]) => {
-  //     setDiceRolls(rolls);
-  //   });
-  // }, []);
-
   // add an event listener to roll() when spacebar is pressed
   useEffect(() => {
     const rollOnClick = (e: KeyboardEvent) => {

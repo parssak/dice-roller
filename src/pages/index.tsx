@@ -43,8 +43,6 @@ export default function Home() {
     setJoined(true);
   };
 
-  console.debug(users.size);
-
   return (
     <>
       <main className="min-h-screen relative bg-green-50 text-3xl text-center">
