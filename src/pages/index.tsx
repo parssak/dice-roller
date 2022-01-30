@@ -1,39 +1,43 @@
 import React, { useState, Suspense, useEffect, lazy } from "react";
-import { Canvas } from "@react-three/fiber";
-import { Physics } from "@react-three/cannon";
-import { Plane } from "../components/canvas/Plane";
-import { OrbitControls } from "@react-three/drei";
-const Dice = lazy(() => import("../components/canvas/Dice"));
+import Game from "../components/canvas/Game";
+import useGameState from "../hooks/useGame";
+
+interface IPlayer {
+  name: string;
+  score: number;
+}
 
 export default function Home() {
+  const { game } = useGameState();
+  const [players, setPlayers] = useState<IPlayer[]>([
+    {
+      name: "Player 1",
+      score: 0,
+    },
+    {
+      name: "Player 2",
+      score: 0,
+    },
+    {
+      name: "Player 3",
+      score: 0,
+    },
+    {
+      name: "Player 4",
+      score: 0,
+    },
+  ]);
   return (
     <>
       <main className="min-h-screen relative bg-green-50">
-        <Canvas
-          camera={{
-            position: [0, 15, 0],
-          }}
-          style={{
-            position: "absolute",
-            width: "100vw",
-            height: "100vh",
-          }}
-        >
-          <OrbitControls enablePan={false} />
-          <ambientLight />
-          <pointLight position={[10, 10, 10]} />
-          <Physics>
-            <Suspense fallback={null}>
-              <Dice rotation={[Math.random(), Math.random(), Math.random()]} />
-              <Dice position={[5, 5, 0]} rotation={[Math.random(), Math.random(), Math.random()]} />
-              <Dice
-                position={[-5, 5, 0]}
-                rotation={[Math.random(), Math.random(), Math.random()]}
-              />
-            </Suspense>
-            <Plane />
-          </Physics>
-        </Canvas>
+        <Game />
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="container">
+            <p className="font-medium text-center text-4xl mt-24">
+              {game.dice[0].value}, {game.dice[1].value}, {game.dice[2].value}
+            </p>
+          </div>
+        </div>
       </main>
     </>
   );
