@@ -80,25 +80,22 @@ export default function Game({ socket }: Props) {
           <OrbitControls enablePan={false} />
           <ambientLight />
           <pointLight position={[10, 10, 10]} />
-          <Physics gravity={[0, -20, 0]}>
+          <Physics gravity={[0, -20, 0]} size={10} iterations={10}>
             <Suspense fallback={null}>
               <Dice
                 position={[5, 5, 0]}
-                // rotation={[Math.random(), Math.random(), Math.random()]}
                 setRollResult={(val: number) => setDiceRoll(val, 0)}
                 index={0}
                 socket={socket}
               />
               <Dice
                 position={[0, 5, 0]}
-                // rotation={[Math.random(), Math.random(), Math.random()]}
                 setRollResult={(val: number) => setDiceRoll(val, 1)}
                 index={1}
                 socket={socket}
               />
               <Dice
                 position={[-5, 5, 0]}
-                // rotation={[Math.random(), Math.random(), Math.random()]}
                 setRollResult={(val: number) => setDiceRoll(val, 2)}
                 index={2}
                 socket={socket}
