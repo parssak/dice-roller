@@ -5,11 +5,6 @@ import { io } from "socket.io-client";
 import LoginPanel from "../components/LoginPanel";
 import isClient from "../utils/isClient";
 
-interface IPlayer {
-  name: string;
-  score: number;
-}
-
 const s = io("ws://192.168.2.29:5656");
 
 export default function Home() {
@@ -53,7 +48,7 @@ export default function Home() {
   return (
     <>
       <main className="min-h-screen relative bg-green-50 text-3xl text-center">
-        {joined ? <Game /> : <LoginPanel join={join} />}
+        {joined ? <Game socket={socket} /> : <LoginPanel join={join} />}
         <div className="absolute inset-0 pointer-events-none p-4">
           <div className="max-w-xs space-y-2">
             {Array.from(users.values())

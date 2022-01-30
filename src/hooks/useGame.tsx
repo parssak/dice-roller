@@ -29,6 +29,7 @@ export default function useGameState() {
 
   const setDiceRoll = (value: number, index: number) => {
     if (game.dice[index].lastUpdated + 2000 > Date.now()) return;
+    if (value === game.dice[index].value) return;
     let newDice = [
       {
         value: game.dice[0].value,

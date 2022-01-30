@@ -3,14 +3,23 @@ import { useFrame, useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three/src/loaders/TextureLoader.js";
 import { useBox } from "@react-three/cannon";
 import * as THREE from "three";
+import { Socket } from "socket.io-client";
 
 interface Props {
   setRollResult: (value: number) => void;
+  index: number;
+  socket: Socket;
   position?: [number, number, number];
   rotation?: [number, number, number];
 }
 
-export default function Dice({ position = [0, 5, 0], rotation = [0, 0, 0], setRollResult }: Props) {
+export default function Dice({
+  setRollResult,
+  index,
+  socket,
+  position = [0, 5, 0],
+  rotation = [0, 0, 0],
+}: Props) {
   const [lastStoppedTime, setLastStoppedTime] = useState(0);
   const [ref, api] = useBox(() => ({
     mass: 2,
@@ -20,6 +29,7 @@ export default function Dice({ position = [0, 5, 0], rotation = [0, 0, 0], setRo
 
   const velocity = useRef([0, 0, 0]);
   const quaternion = useRef([0, 0, 0, 0]);
+
   useEffect(() => {
     const unsubscribe = api.velocity.subscribe((v) => (velocity.current = v));
     const unsubscribe2 = api.quaternion.subscribe((q) => (quaternion.current = q));
@@ -27,6 +37,13 @@ export default function Dice({ position = [0, 5, 0], rotation = [0, 0, 0], setRo
       unsubscribe();
       unsubscribe2();
     };
+  }, []);
+
+  useEffect(() => {
+    socket.on("roll", (rolls: RollPayload[]) => {
+      console.debug("roll", rolls);
+      roll(rolls[index])
+    });
   }, []);
 
   const texture_1 = useLoader(TextureLoader, "textures/dice_1.jpg");
@@ -63,34 +80,33 @@ export default function Dice({ position = [0, 5, 0], rotation = [0, 0, 0], setRo
     return 3;
   };
 
-  const roll = () => {
-    interface RollPayload {
-      position: [number, number, number];
-      rotation: [number, number, number];
-      localImpulse: [number, number, number];
-      localImpulsePoint: [number, number, number];
-      torque: [number, number, number];
-    }
+  // const roll = () => {
+  //   api.position.set(position[0], position[1], position[2]);
+  //   api.rotation.set(Math.random(), Math.random(), Math.random());
 
-    api.position.set(position[0], position[1], position[2]);
-    api.rotation.set(Math.random(), Math.random(), Math.random());
+  //   const magnitude = 30;
+  //   const torqueMagnitude = 200;
 
-    const magnitude = 30;
-    const torqueMagnitude = 200;
+  //   api.applyLocalImpulse(
+  //     [
+  //       Math.random() * magnitude - magnitude / 2,
+  //       Math.random() * magnitude - magnitude / 2,
+  //       Math.random() * magnitude - magnitude / 2,
+  //     ],
+  //     [Math.random() / 2, Math.random() / 2, Math.random() / 2]
+  //   );
+  //   api.applyTorque([
+  //     torqueMagnitude * Math.random() - torqueMagnitude / 2,
+  //     torqueMagnitude * Math.random() - torqueMagnitude / 2,
+  //     torqueMagnitude * Math.random() - torqueMagnitude / 2,
+  //   ]);
+  // };
 
-    api.applyLocalImpulse(
-      [
-        Math.random() * magnitude - magnitude / 2,
-        Math.random() * magnitude - magnitude / 2,
-        Math.random() * magnitude - magnitude / 2,
-      ],
-      [Math.random() / 2, Math.random() / 2, Math.random() / 2]
-    );
-    api.applyTorque([
-      torqueMagnitude * Math.random() - torqueMagnitude / 2,
-      torqueMagnitude * Math.random() - torqueMagnitude / 2,
-      torqueMagnitude * Math.random() - torqueMagnitude / 2,
-    ]);
+  const roll = (rollPayload: RollPayload) => {
+    api.position.set(rollPayload.position[0], rollPayload.position[1], rollPayload.position[2]);
+    api.rotation.set(rollPayload.rotation[0], rollPayload.rotation[1], rollPayload.rotation[2]);
+    api.applyLocalImpulse(rollPayload.localImpulse, rollPayload.localImpulsePoint);
+    api.applyTorque(rollPayload.torque);
   };
 
   const hasStopped = () => {
@@ -110,22 +126,22 @@ export default function Dice({ position = [0, 5, 0], rotation = [0, 0, 0], setRo
   });
 
   // add an event listener to roll() when spacebar is pressed
-  useEffect(() => {
-    const rollOnClick = () => {
-      roll();
-    };
-    window.addEventListener("keydown", rollOnClick);
-    return () => {
-      window.removeEventListener("keydown", rollOnClick);
-    };
-  }, []);
+  // useEffect(() => {
+  //   const rollOnClick = () => {
+  //     roll();
+  //   };
+  //   window.addEventListener("keydown", rollOnClick);
+  //   return () => {
+  //     window.removeEventListener("keydown", rollOnClick);
+  //   };
+  // }, []);
 
   return (
     <mesh
       ref={ref}
-      onClick={(e) => {
-        roll();
-      }}
+      // onClick={(e) => {
+      //   roll();
+      // }}
     >
       <boxBufferGeometry attach="geometry" />
       <meshToonMaterial map={texture_1} attachArray="material" />
