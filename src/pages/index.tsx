@@ -33,8 +33,8 @@ export default function Home() {
         <Game />
         <div className="absolute inset-0 pointer-events-none">
           <div className="container">
-            <p className="font-medium text-center text-4xl mt-24">
-              {game.dice[0].value}, {game.dice[1].value}, {game.dice[2].value}
+            <p className="font-bold text-center text-4xl mt-24">
+              {game.dice[0].value} {game.dice[1].value} {game.dice[2].value}
             </p>
           </div>
         </div>
