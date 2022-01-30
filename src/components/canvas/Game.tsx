@@ -16,7 +16,6 @@ type Props = {
 
 export default function Game({ socket }: Props) {
   const { game, setDiceRoll } = useGameState();
-  const [diceRolls, setDiceRolls] = useState<RollPayload[]>([]);
 
   const handleDiceRoll = () => {
     const magnitude = 30;
@@ -47,7 +46,6 @@ export default function Game({ socket }: Props) {
     socket.emit("roll", [dice_one, dice_two, dice_three]);
   };
 
-  // add an event listener to roll() when spacebar is pressed
   useEffect(() => {
     const rollOnClick = (e: KeyboardEvent) => {
       if (e.key === " ") {
