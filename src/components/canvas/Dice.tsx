@@ -4,6 +4,7 @@ import { TextureLoader } from "three/src/loaders/TextureLoader.js";
 import { useBox } from "@react-three/cannon";
 import * as THREE from "three";
 import { Socket } from "socket.io-client";
+import useGameState from "../../hooks/useGame";
 
 interface Props {
   setRollResult: (value: number) => void;
@@ -20,7 +21,9 @@ export default function Dice({
   position = [0, 5, 0],
   rotation = [0, 0, 0],
 }: Props) {
+  const { game } = useGameState();
   const [lastStoppedTime, setLastStoppedTime] = useState(0);
+  // const [storedResult, setStoredResult] = useState(-1);
   const [ref, api] = useBox(() => ({
     mass: 2,
     position: position,
@@ -80,6 +83,7 @@ export default function Dice({
   };
 
   const roll = (rollPayload: RollPayload) => {
+    // setStoredResult(-1);
     api.position.set(rollPayload.position[0], rollPayload.position[1], rollPayload.position[2]);
     api.rotation.set(rollPayload.rotation[0], rollPayload.rotation[1], rollPayload.rotation[2]);
     api.applyLocalImpulse(rollPayload.localImpulse, rollPayload.localImpulsePoint);
@@ -94,11 +98,13 @@ export default function Dice({
   };
 
   useFrame(({ clock }) => {
-    if (!hasStopped() || clock.elapsedTime < 1) return;
-    if (clock.elapsedTime - lastStoppedTime > 0 && clock.elapsedTime - lastStoppedTime < 0.5)
+    if (!hasStopped() || clock.elapsedTime < 1) {
+      console.debug("moving");
+      return;
+    }
+    const result = getRollResult();
+    if (result !== game.dice[index].value) {
       setRollResult(getRollResult());
-    if (clock.elapsedTime - lastStoppedTime > 1) {
-      setLastStoppedTime(clock.elapsedTime);
     }
   });
 

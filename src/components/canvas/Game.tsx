@@ -7,6 +7,7 @@ import useGameState from "../../hooks/useGame";
 import { RecoilRoot } from "recoil";
 import { Socket } from "socket.io-client";
 import Wall from "./Wall";
+import { ARENA_SIZE } from "../../utils/constants";
 const Dice = lazy(() => import("./Dice"));
 
 type Props = {
@@ -97,10 +98,10 @@ export default function Game({ socket }: Props) {
               />
             </Suspense>
             <Plane />
-            <Wall position={[0, 0, -20]} />
-            <Wall position={[0, 0, 20]} rotation={[0, Math.PI, 0]} />
-            <Wall position={[20, 0, 0]} rotation={[0, -Math.PI / 2, 0]} />
-            <Wall position={[-20, 0, 0]} rotation={[0, Math.PI / 2, 0]} />
+            <Wall position={[0, 0, -(ARENA_SIZE / 2)]} />
+            <Wall position={[0, 0, ARENA_SIZE / 2]} rotation={[0, Math.PI, 0]} />
+            <Wall position={[ARENA_SIZE / 2, 0, 0]} rotation={[0, -Math.PI / 2, 0]} />
+            <Wall position={[-ARENA_SIZE / 2, 0, 0]} rotation={[0, Math.PI / 2, 0]} />
           </Physics>
         </RecoilRoot>
       </Canvas>
