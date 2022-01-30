@@ -1,18 +1,30 @@
+import React, { useRef, useState, Suspense, useEffect, lazy } from "react";
+import { Canvas, useFrame, useLoader } from "@react-three/fiber";
+// @ts-ignore
+const Box = lazy(() => import("../components/canvas/Box"));
+
 export default function Home() {
+  const [hasMounted, setHasMounted] = useState(false);
+  useEffect(() => setHasMounted(true), []);
   return (
     <>
-      <main className="container min-h-screen grid pt-48 md:pt-0 md:place-items-center">
-        <div className="md:text-center">
-          <h1 className="text-5xl font-semibold ">
-            Next.js, TailwindCSS, TypeScript Template!
-          </h1>
-          <p className="text-2xl text-gray-600 md:max-w-2xl mx-auto mt-12 md:mt-6">
-            Lorem ipsum dolor sit amet consectetur, adipisicing elit. Assumenda,
-            architecto, ducimus cumque temporibus optio quae dolore expedita
-            itaque ut minima labore nisi veniam amet rerum quidem, quam dolorum
-            vero nulla.
-          </p>
-        </div>
+      <main className="min-h-screen relative bg-green-50">
+        {hasMounted && (
+          <Canvas
+            camera={{ position: [0, 0, 10] }}
+            style={{
+              position: "absolute",
+              width: "100vw",
+              height: "100vh",
+            }}
+          >
+            <ambientLight />
+            <pointLight position={[10, 10, 10]} />
+            <Suspense fallback={null}>
+              <Box />
+            </Suspense>
+          </Canvas>
+        )}
       </main>
     </>
   );
