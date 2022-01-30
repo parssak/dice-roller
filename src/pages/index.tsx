@@ -33,9 +33,38 @@ export default function Home() {
         <Game />
         <div className="absolute inset-0 pointer-events-none">
           <div className="container">
-            <p className="font-bold text-center text-4xl mt-24">
+            <p className="font-bold text-center text-6xl mt-24">
               {game.dice[0].value} {game.dice[1].value} {game.dice[2].value}
             </p>
+          </div>
+        </div>
+        <div className="absolute inset-0 pointer-events-none p-4">
+          <div className="max-w-xs space-y-2">
+            {players.map((player, index) => (
+              <div
+                key={index}
+                className={`
+                bg-gray-100
+                bg-opacity-40
+                border-b-2
+                ${index === 0 ? " border-blue-400 bg-blue-300 bg-opacity-40" : "border-gray-20"}
+                rounded-md 
+                text-xl
+                p-1 
+                flex 
+                justify-between
+                items-center
+                `}
+                style={{
+                  // @ts-ignore
+                  backDropFilter: "blur(10px)",
+                  WebkitBackdropFilter: "blur(10px)",
+                }}
+              >
+                <p className="font-medium">{player.name}</p>
+                <p>{player.score}</p>
+              </div>
+            ))}
           </div>
         </div>
       </main>
