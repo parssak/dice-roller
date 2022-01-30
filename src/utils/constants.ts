@@ -1,1 +1,1 @@
-export const ARENA_SIZE = 70;
+export const ARENA_SIZE = 45;
