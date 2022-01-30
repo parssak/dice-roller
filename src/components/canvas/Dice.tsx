@@ -1,7 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useFrame, useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three/src/loaders/TextureLoader.js";
-// import orbit controls from @
 import { useBox } from "@react-three/cannon";
 import * as THREE from "three";
 
@@ -65,9 +64,18 @@ export default function Dice({ position = [0, 5, 0], rotation = [0, 0, 0], setRo
   };
 
   const roll = () => {
+    interface RollPayload {
+      position: [number, number, number];
+      rotation: [number, number, number];
+      localImpulse: [number, number, number];
+      localImpulsePoint: [number, number, number];
+      torque: [number, number, number];
+    }
+
     api.position.set(position[0], position[1], position[2]);
     api.rotation.set(Math.random(), Math.random(), Math.random());
-    const magnitude = 5;
+
+    const magnitude = 30;
     const torqueMagnitude = 200;
 
     api.applyLocalImpulse(
@@ -76,7 +84,7 @@ export default function Dice({ position = [0, 5, 0], rotation = [0, 0, 0], setRo
         Math.random() * magnitude - magnitude / 2,
         Math.random() * magnitude - magnitude / 2,
       ],
-      [0, 0, 0]
+      [Math.random() / 2, Math.random() / 2, Math.random() / 2]
     );
     api.applyTorque([
       torqueMagnitude * Math.random() - torqueMagnitude / 2,
@@ -100,6 +108,18 @@ export default function Dice({ position = [0, 5, 0], rotation = [0, 0, 0], setRo
       setLastStoppedTime(clock.elapsedTime);
     }
   });
+
+  // add an event listener to roll() when spacebar is pressed
+  useEffect(() => {
+    const rollOnClick = () => {
+      roll();
+    };
+    window.addEventListener("keydown", rollOnClick);
+    return () => {
+      window.removeEventListener("keydown", rollOnClick);
+    };
+  }, []);
+
   return (
     <mesh
       ref={ref}
