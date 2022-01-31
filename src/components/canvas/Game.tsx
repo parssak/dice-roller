@@ -40,7 +40,7 @@ export default function Game({ socket }: Props) {
     ) {
       sendDiceResult();
     }
-  }, [game.dice, game.lastDiceChange]);
+  }, [game.dice, game.lastDiceChange, turn, player]);
 
   const handleDiceRoll = () => {
     const magnitude = 30;
@@ -81,7 +81,7 @@ export default function Game({ socket }: Props) {
     return () => {
       window.removeEventListener("keydown", rollOnClick);
     };
-  }, []);
+  }, [player, turn]);
 
   return (
     <>
