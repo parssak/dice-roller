@@ -23,7 +23,6 @@ export default function Dice({
 }: Props) {
   const { game } = useGameState();
   const [lastStoppedTime, setLastStoppedTime] = useState(0);
-  // const [storedResult, setStoredResult] = useState(-1);
   const [ref, api] = useBox(() => ({
     mass: 2,
     position: position,
@@ -83,7 +82,6 @@ export default function Dice({
   };
 
   const roll = (rollPayload: RollPayload) => {
-    // setStoredResult(-1);
     api.position.set(rollPayload.position[0], rollPayload.position[1], rollPayload.position[2]);
     api.rotation.set(rollPayload.rotation[0], rollPayload.rotation[1], rollPayload.rotation[2]);
     api.applyLocalImpulse(rollPayload.localImpulse, rollPayload.localImpulsePoint);
@@ -92,14 +90,15 @@ export default function Dice({
 
   const hasStopped = () => {
     const v = velocity.current;
-    return (
-      Math.round(v[0] * 100) === 0 && Math.round(v[1] * 100) === 0 && Math.round(v[2] * 100) === 0
-    );
+    const vVector = new THREE.Vector3(v[0], v[1], v[2]);
+    return vVector.length() < 0.0006;
+    // return (
+    //   Math.round(v[0] * 100) === 0 && Math.round(v[1] * 100) === 0 && Math.round(v[2] * 100) === 0
+    // );
   };
 
   useFrame(({ clock }) => {
     if (!hasStopped() || clock.elapsedTime < 1) {
-      console.debug("moving");
       return;
     }
     const result = getRollResult();

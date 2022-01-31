@@ -1,6 +1,9 @@
 interface IPlayer {
+  _id: string;
   name: string;
-  score: number;
+  type: "player" | "house" | "unset";
+  score: 0;
+  turn_index: number;
 }
 
 interface RollPayload {

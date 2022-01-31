@@ -3,19 +3,44 @@ import { Canvas } from "@react-three/fiber";
 import { Physics } from "@react-three/cannon";
 import { Plane } from "./Plane";
 import { OrbitControls } from "@react-three/drei";
-import useGameState from "../../hooks/useGame";
 import { RecoilRoot } from "recoil";
 import { Socket } from "socket.io-client";
+import useGameState from "../../hooks/useGame";
 import Wall from "./Wall";
 import { ARENA_SIZE } from "../../utils/constants";
+import useTurn from "../../hooks/useTurn";
+import usePlayer from "../../hooks/usePlayer";
 const Dice = lazy(() => import("./Dice"));
 
 type Props = {
   socket: Socket;
 };
 
+const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 export default function Game({ socket }: Props) {
   const { game, setDiceRoll } = useGameState();
+  const { turn, setTurn } = useTurn();
+  const { player } = usePlayer();
+
+  const sendDiceResult = async () => {
+    await sleep(1000);
+    socket.emit("roll-result", {
+      roll: [game.dice[0].value, game.dice[1].value, game.dice[2].value],
+      turn,
+      player,
+    });
+  };
+  useEffect(() => {
+    if (
+      game.dice[0].updatedForTurn === turn &&
+      game.dice[1].updatedForTurn === turn &&
+      game.dice[2].updatedForTurn === turn &&
+      player?.turn_index === turn
+    ) {
+      sendDiceResult();
+    }
+  }, [game.dice, game.lastDiceChange]);
 
   const handleDiceRoll = () => {
     const magnitude = 30;
@@ -48,7 +73,7 @@ export default function Game({ socket }: Props) {
 
   useEffect(() => {
     const rollOnClick = (e: KeyboardEvent) => {
-      if (e.key === " ") {
+      if (e.key === " " && player.turn_index === turn) {
         handleDiceRoll();
       }
     };
