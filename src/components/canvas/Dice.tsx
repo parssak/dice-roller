@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef } from "react";
 import { useFrame, useLoader } from "@react-three/fiber";
 import { TextureLoader } from "three/src/loaders/TextureLoader.js";
 import { useBox } from "@react-three/cannon";
@@ -21,8 +21,7 @@ export default function Dice({
   position = [0, 5, 0],
   rotation = [0, 0, 0],
 }: Props) {
-  const { game, getDice, setDiceRoll } = useGameState();
-  const [lastStoppedTime, setLastStoppedTime] = useState(0);
+  const { getDice, setDiceRoll } = useGameState();
   const [ref, api] = useBox(() => ({
     mass: 2,
     position: position,
@@ -95,9 +94,6 @@ export default function Dice({
     const v = velocity.current;
     const vVector = new THREE.Vector3(v[0], v[1], v[2]);
     return vVector.length() < 0.0006;
-    // return (
-    //   Math.round(v[0] * 100) === 0 && Math.round(v[1] * 100) === 0 && Math.round(v[2] * 100) === 0
-    // );
   };
 
   useFrame(({ clock }) => {

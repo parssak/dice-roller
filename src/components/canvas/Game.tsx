@@ -19,12 +19,12 @@ type Props = {
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default function Game({ socket }: Props) {
-  const { game, setDiceRoll, getDice } = useGameState();
+  const { game, setDiceRoll, getDice, setHasRolled } = useGameState();
   const { turn, setTurn } = useTurn();
   const { player } = usePlayer();
 
   const sendDiceResult = async () => {
-    await sleep(1000);
+    await sleep(2000);
     const dice = getDice();
     if (
       dice[0].updatedForTurn === turn &&
@@ -34,15 +34,22 @@ export default function Game({ socket }: Props) {
       dice[1].value !== -1 &&
       dice[2].value !== -1 &&
       player?.turn_index === turn &&
-      Date.now() - game.lastDiceChange > 500
-    )
-      console.debug(dice.map(d => d.value));
+      Date.now() - game.lastDiceChange > 1000 &&
+      game.hasRolled
+    ) {
+      console.debug(dice.map((d) => d.value));
       socket.emit("roll-result", {
         roll: [dice[0].value, dice[1].value, dice[2].value],
         turn,
         player,
       });
+      setHasRolled(false);
+    } else if (Date.now() - game.lastDiceChange > 500) {
+      console.debug("not sending");
+      // sendDiceResult();
+    }
   };
+
   useEffect(() => {
     const dice = getDice();
     if (
@@ -52,7 +59,8 @@ export default function Game({ socket }: Props) {
       dice[0].value !== -1 &&
       dice[1].value !== -1 &&
       dice[2].value !== -1 &&
-      player.turn_index === turn
+      player.turn_index === turn &&
+      game.hasRolled 
     ) {
       sendDiceResult();
     }
@@ -85,12 +93,17 @@ export default function Game({ socket }: Props) {
     const dice_three: RollPayload = getRollPayload([-5, 5, 0]);
 
     socket.emit("roll", [dice_one, dice_two, dice_three]);
+    setHasRolled(true);
   };
 
   useEffect(() => {
     const rollOnClick = (e: KeyboardEvent) => {
-      if (e.key === " " && player.turn_index === turn) {
-        handleDiceRoll();
+      if (e.key === " ") {
+        if (player.turn_index === turn && !game.hasRolled) {
+          handleDiceRoll();
+        } else {
+          console.debug("tried to roll when not your turn", player, turn);
+        }
       }
     };
     window.addEventListener("keydown", rollOnClick);

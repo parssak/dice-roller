@@ -6,9 +6,12 @@ import LoginPanel from "../components/LoginPanel";
 import isClient from "../utils/isClient";
 import usePlayer from "../hooks/usePlayer";
 import useTurn from "../hooks/useTurn";
+import axios from "axios";
 
-// const s = io("ws://localhost:8080");
-const s = io("wss://parssa-dice-game.herokuapp.com");
+const DEBUG = false;
+const BASE_URL = DEBUG ? "://localhost:8080" : "://parssa-dice-game.herokuapp.com";
+const s = io(`ws${DEBUG ? '' : 's'}${BASE_URL}`);
+// const s = io("wss://parssa-dice-game.herokuapp.com");
 
 export default function Home() {
   const { game } = useGameState();
@@ -17,14 +20,38 @@ export default function Home() {
   const [users, setUsers] = useState<Map<string, IPlayer>>(new Map());
   const [joined, setJoined] = useState(false);
   const [socket] = useState(s);
+
+  const handleUsers = (users: IPlayer[]) => {
+    if (!users) return;
+    console.debug(users)
+    const usersMap = new Map<string, IPlayer>(
+      users.filter((user) => user.type === "player").map((user) => [user._id, user])
+    );
+    const curr = users.find((u) => u._id === socket.id);
+    if (curr) {
+      console.debug("setting current player", curr);
+      setPlayer(curr);
+    } else {
+      console.debug("couldnt fnd");
+    }
+    setUsers(usersMap);
+  };
+
   useEffect(() => {
     if (!isClient()) {
+      console.debug('not client')
       socket.disconnect();
-      return;
+      // return;
     }
 
-    socket.on("connect", () => {
+    s.on("connect", () => {
       console.debug("Connected to server");
+      axios.get(`http${BASE_URL}/api/game`).then((res) => {
+        const { turn, players } = res.data;
+        console.debug("got game", res.data);
+        handleUsers(players);
+        setTurn(turn);
+      });
     });
 
     socket.on("disconnect", () => {
@@ -38,19 +65,9 @@ export default function Home() {
 
     socket.on("users", (usersResponse) => {
       const usersArray = JSON.parse(usersResponse) as unknown as IPlayer[];
-      const usersMap = new Map<string, IPlayer>(
-        usersArray.filter((user) => user.type === "player").map((user) => [user._id, user])
-      );
-      const curr = usersArray.find((u) => u._id === socket.id);
-      if (curr) {
-        console.debug("setting current player", curr);
-        setPlayer(curr);
-      }
-      setUsers(usersMap);
+      handleUsers(usersArray);
     });
   }, [socket]);
-
-  console.debug(game);
 
   const join = (name: string) => {
     s.emit("join", { name, type: "player" });

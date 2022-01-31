@@ -49,6 +49,7 @@ const gameState = atom({
     //   },
     // ],
     lastDiceChange: 0,
+    hasRolled: false,
   },
   dangerouslyAllowMutability: true,
 });
@@ -81,9 +82,14 @@ export default function useGameState() {
 
   const getDice = () => [dice1, dice2, dice3];
 
+  const setHasRolled = (hasRolled: boolean) => {
+    setGame({ ...game, hasRolled });
+  };
+
   return {
     game,
     setDiceRoll,
     getDice,
+    setHasRolled,
   };
 }
