@@ -19,34 +19,44 @@ type Props = {
 const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
 
 export default function Game({ socket }: Props) {
-  const { game, setDiceRoll } = useGameState();
+  const { game, setDiceRoll, getDice } = useGameState();
   const { turn, setTurn } = useTurn();
   const { player } = usePlayer();
 
   const sendDiceResult = async () => {
     await sleep(1000);
+    const dice = getDice();
     if (
-      game.dice[0].updatedForTurn === turn &&
-      game.dice[1].updatedForTurn === turn &&
-      game.dice[2].updatedForTurn === turn &&
-      player?.turn_index === turn
+      dice[0].updatedForTurn === turn &&
+      dice[1].updatedForTurn === turn &&
+      dice[2].updatedForTurn === turn &&
+      dice[0].value !== -1 &&
+      dice[1].value !== -1 &&
+      dice[2].value !== -1 &&
+      player?.turn_index === turn &&
+      Date.now() - game.lastDiceChange > 500
     )
+      console.debug(dice.map(d => d.value));
       socket.emit("roll-result", {
-        roll: [game.dice[0].value, game.dice[1].value, game.dice[2].value],
+        roll: [dice[0].value, dice[1].value, dice[2].value],
         turn,
         player,
       });
   };
   useEffect(() => {
+    const dice = getDice();
     if (
-      game.dice[0].updatedForTurn === turn &&
-      game.dice[1].updatedForTurn === turn &&
-      game.dice[2].updatedForTurn === turn &&
-      player?.turn_index === turn
+      dice[0].updatedForTurn === turn &&
+      dice[1].updatedForTurn === turn &&
+      dice[2].updatedForTurn === turn &&
+      dice[0].value !== -1 &&
+      dice[1].value !== -1 &&
+      dice[2].value !== -1 &&
+      player.turn_index === turn
     ) {
       sendDiceResult();
     }
-  }, [game.dice, game.lastDiceChange, turn, player]);
+  }, [game.lastDiceChange, turn, player]);
 
   const handleDiceRoll = () => {
     const magnitude = 30;
@@ -87,7 +97,7 @@ export default function Game({ socket }: Props) {
     return () => {
       window.removeEventListener("keydown", rollOnClick);
     };
-  }, [player, turn]);
+  }, [socket, player, turn]);
 
   return (
     <>
@@ -137,7 +147,7 @@ export default function Game({ socket }: Props) {
       <div className="absolute inset-0 pointer-events-none">
         <div className="container">
           <p className="font-bold text-center text-6xl mt-24">
-            {game.dice[0].value} {game.dice[1].value} {game.dice[2].value}
+            {getDice()[0].value} {getDice()[1].value} {getDice()[2].value}
           </p>
         </div>
       </div>

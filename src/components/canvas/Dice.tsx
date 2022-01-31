@@ -21,7 +21,7 @@ export default function Dice({
   position = [0, 5, 0],
   rotation = [0, 0, 0],
 }: Props) {
-  const { game } = useGameState();
+  const { game, getDice, setDiceRoll } = useGameState();
   const [lastStoppedTime, setLastStoppedTime] = useState(0);
   const [ref, api] = useBox(() => ({
     mass: 2,
@@ -43,6 +43,9 @@ export default function Dice({
 
   useEffect(() => {
     socket.on("roll", (rolls: RollPayload[]) => {
+      setDiceRoll(-1, 0);
+      setDiceRoll(-1, 1);
+      setDiceRoll(-1, 2);
       roll(rolls[index]);
     });
   }, []);
@@ -102,7 +105,7 @@ export default function Dice({
       return;
     }
     const result = getRollResult();
-    if (result !== game.dice[index].value) {
+    if (result !== getDice()[index].value) {
       setRollResult(getRollResult());
     }
   });
