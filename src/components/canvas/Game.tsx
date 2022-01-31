@@ -25,11 +25,17 @@ export default function Game({ socket }: Props) {
 
   const sendDiceResult = async () => {
     await sleep(1000);
-    socket.emit("roll-result", {
-      roll: [game.dice[0].value, game.dice[1].value, game.dice[2].value],
-      turn,
-      player,
-    });
+    if (
+      game.dice[0].updatedForTurn === turn &&
+      game.dice[1].updatedForTurn === turn &&
+      game.dice[2].updatedForTurn === turn &&
+      player?.turn_index === turn
+    )
+      socket.emit("roll-result", {
+        roll: [game.dice[0].value, game.dice[1].value, game.dice[2].value],
+        turn,
+        player,
+      });
   };
   useEffect(() => {
     if (
