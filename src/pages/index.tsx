@@ -7,8 +7,8 @@ import isClient from "../utils/isClient";
 import usePlayer from "../hooks/usePlayer";
 import useTurn from "../hooks/useTurn";
 
-const s = io("ws://localhost:8080");
-// const s = io("wss://parssa-dice-game.herokuapp.com");
+// const s = io("ws://localhost:8080");
+const s = io("wss://parssa-dice-game.herokuapp.com");
 
 export default function Home() {
   const { game } = useGameState();
