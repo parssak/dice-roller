@@ -95,11 +95,11 @@ export default function Game({ socket }: Props) {
   useEffect(() => {
     const rollOnClick = (e: KeyboardEvent) => {
       if (e.key === " ") {
-        handleDiceRoll();
-        // if (player.turn_index === turn && !game.hasRolled) {
-        // } else {
-        //   console.debug("tried to roll when not your turn", player, turn);
-        // }
+        if (player.turn_index === turn && !game.hasRolled) {
+          handleDiceRoll();
+        } else {
+          console.debug("tried to roll when not your turn", player, turn);
+        }
       }
     };
     window.addEventListener("keydown", rollOnClick);
