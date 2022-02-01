@@ -108,6 +108,12 @@ export default function Game({ socket }: Props) {
     };
   }, [socket, player, turn]);
 
+  const getDisplayDice = () => {
+    const d = getDice();
+    const sortedDice = [d[0].value, d[1].value, d[2].value];
+    return sortedDice;
+  };
+
   return (
     <>
       <Canvas
@@ -155,12 +161,11 @@ export default function Game({ socket }: Props) {
       </Canvas>
       <div className="absolute inset-0 pointer-events-none">
         <div className="container flex flex-col h-full ">
-          <p className="font-bold text-center text-6xl mt-24">
-            {getDice()[0].value} {getDice()[1].value} {getDice()[2].value}
-          </p>
+          <p className="font-bold text-center text-6xl mt-24">{getDisplayDice().join(" ")}</p>
           <button
             onClick={handleDiceRoll}
-            className="mt-auto mb-24 px-6 py-2 bg-blue-200 max-w-md mx-auto rounded hover:bg-blue-300 cursor-pointer pointer-events-auto">
+            className="mt-auto mb-24 px-6 py-2 bg-blue-200 max-w-md mx-auto rounded hover:bg-blue-300 cursor-pointer pointer-events-auto"
+          >
             Roll
           </button>
         </div>
