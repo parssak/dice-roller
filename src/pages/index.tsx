@@ -8,7 +8,7 @@ import usePlayer from "../hooks/usePlayer";
 import useTurn from "../hooks/useTurn";
 import axios from "axios";
 
-const DEBUG = true;
+const DEBUG = false;
 const BASE_URL = DEBUG ? "://localhost:8080" : "://parssa-dice-game.herokuapp.com";
 const s = io(`ws${DEBUG ? "" : "s"}${BASE_URL}`);
 // const s = io("wss://parssa-dice-game.herokuapp.com");
@@ -121,7 +121,7 @@ export default function Home() {
                 >
                   <p className="font-medium">
                     {p._id === player?._id && `* `}
-                    {p.name}
+                    {p.name || 'Player'}
                   </p>
                   <p>{getScore(p.turn_index) ?? ""}</p>
                 </div>
