@@ -5,6 +5,7 @@ import { useBox } from "@react-three/cannon";
 import * as THREE from "three";
 import { Socket } from "socket.io-client";
 import useGameState from "../../hooks/useGame";
+import sleep from "../../utils/sleep";
 
 interface Props {
   setRollResult: (value: number) => void;
@@ -83,7 +84,8 @@ export default function Dice({
     return 3;
   };
 
-  const roll = (rollPayload: RollPayload) => {
+  const roll = async (rollPayload: RollPayload) => {
+    api.velocity.set(0,0,0);
     api.position.set(rollPayload.position[0], rollPayload.position[1], rollPayload.position[2]);
     api.rotation.set(rollPayload.rotation[0], rollPayload.rotation[1], rollPayload.rotation[2]);
     api.applyLocalImpulse(rollPayload.localImpulse, rollPayload.localImpulsePoint);

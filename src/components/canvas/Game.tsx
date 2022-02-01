@@ -10,13 +10,14 @@ import Wall from "./Wall";
 import { ARENA_SIZE } from "../../utils/constants";
 import useTurn from "../../hooks/useTurn";
 import usePlayer from "../../hooks/usePlayer";
+import sleep from "../../utils/sleep";
 const Dice = lazy(() => import("./Dice"));
 
 type Props = {
   socket: Socket;
 };
 
-const sleep = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
 
 export default function Game({ socket }: Props) {
   const { game, setDiceRoll, getDice, setHasRolled } = useGameState();
@@ -34,7 +35,7 @@ export default function Game({ socket }: Props) {
       dice[1].value !== -1 &&
       dice[2].value !== -1 &&
       player?.turn_index === turn &&
-      // Date.now() - game.lastDiceChange > 1000 &&
+      Date.now() - game.lastDiceChange > 1000 &&
       game.hasRolled
     ) {
       console.debug(dice.map((d) => d.value));
@@ -56,7 +57,7 @@ export default function Game({ socket }: Props) {
       dice[0].value !== -1 &&
       dice[1].value !== -1 &&
       dice[2].value !== -1 &&
-      player.turn_index === turn &&
+      // player.turn_index === turn &&
       game.hasRolled
     ) {
       sendDiceResult();

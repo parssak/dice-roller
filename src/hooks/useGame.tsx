@@ -31,23 +31,6 @@ const dice3State = atom({
 const gameState = atom({
   key: "gameState",
   default: {
-    // dice: [
-    //   {
-    //     value: -1,
-    //     lastUpdated: 0,
-    //     updatedForTurn: -1,
-    //   },
-    //   {
-    //     value: -1,
-    //     lastUpdated: 0,
-    //     updatedForTurn: -1,
-    //   },
-    //   {
-    //     value: -1,
-    //     lastUpdated: 0,
-    //     updatedForTurn: -1,
-    //   },
-    // ],
     lastDiceChange: 0,
     hasRolled: false,
   },
