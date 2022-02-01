@@ -34,7 +34,7 @@ export default function Game({ socket }: Props) {
       dice[1].value !== -1 &&
       dice[2].value !== -1 &&
       player?.turn_index === turn &&
-      Date.now() - game.lastDiceChange > 1000 &&
+      // Date.now() - game.lastDiceChange > 1000 &&
       game.hasRolled
     ) {
       console.debug(dice.map((d) => d.value));
@@ -44,9 +44,6 @@ export default function Game({ socket }: Props) {
         player,
       });
       setHasRolled(false);
-    } else if (Date.now() - game.lastDiceChange > 500) {
-      console.debug("not sending");
-      // sendDiceResult();
     }
   };
 
@@ -60,7 +57,7 @@ export default function Game({ socket }: Props) {
       dice[1].value !== -1 &&
       dice[2].value !== -1 &&
       player.turn_index === turn &&
-      game.hasRolled 
+      game.hasRolled
     ) {
       sendDiceResult();
     }

@@ -8,9 +8,9 @@ import usePlayer from "../hooks/usePlayer";
 import useTurn from "../hooks/useTurn";
 import axios from "axios";
 
-const DEBUG = false;
+const DEBUG = true;
 const BASE_URL = DEBUG ? "://localhost:8080" : "://parssa-dice-game.herokuapp.com";
-const s = io(`ws${DEBUG ? '' : 's'}${BASE_URL}`);
+const s = io(`ws${DEBUG ? "" : "s"}${BASE_URL}`);
 // const s = io("wss://parssa-dice-game.herokuapp.com");
 
 export default function Home() {
@@ -20,10 +20,18 @@ export default function Home() {
   const [users, setUsers] = useState<Map<string, IPlayer>>(new Map());
   const [joined, setJoined] = useState(false);
   const [socket] = useState(s);
+  const [scores, setScores] = useState<
+    Record<
+      number,
+      {
+        roll: [number, number, number];
+      }
+    >
+  >({});
 
   const handleUsers = (users: IPlayer[]) => {
     if (!users) return;
-    console.debug(users)
+    console.debug(users);
     const usersMap = new Map<string, IPlayer>(
       users.filter((user) => user.type === "player").map((user) => [user._id, user])
     );
@@ -39,7 +47,7 @@ export default function Home() {
 
   useEffect(() => {
     if (!isClient()) {
-      console.debug('not client')
+      console.debug("not client");
       socket.disconnect();
       // return;
     }
@@ -61,6 +69,10 @@ export default function Home() {
     socket.on("turn", (turn: number) => {
       console.debug(`-- Turn ${turn} --`);
       setTurn(turn);
+    });
+
+    socket.on("roll-result", (entries: any) => {
+      setScores(JSON.parse(entries));
     });
 
     socket.on("users", (usersResponse) => {
@@ -88,8 +100,8 @@ export default function Home() {
                   className={`
                 bg-gray-100
                 bg-opacity-40
-                border-b-2
                 ${index === turn ? " border-blue-400 bg-blue-300 bg-opacity-40" : "border-gray-20"}
+                border-b-2
                 rounded-md 
                 text-xl
                 p-1 
@@ -102,12 +114,12 @@ export default function Home() {
                   }}
                 >
                   <p className="font-medium">
-                    {p._id === player?._id && `*`}
+                    {p._id === player?._id && `* `}
                     {p.name}
-                    {p.turn_index}
                   </p>
-                  <p>{p.score}</p>
-                  <p>{p.turn_index}</p>
+                  <p>
+                    {scores[p.turn_index]?.roll[0]} {scores[p.turn_index]?.roll[1]} {scores[p.turn_index]?.roll[2]}
+                  </p>
                 </div>
               ))}
           </div>
