@@ -88,6 +88,7 @@ export default function Home() {
 
   const getScore = (turn_index: number) => {
     const score = scores[turn_index];
+    console.debug('got score', score);
     if (!score) return undefined;
     return [score.roll[0], score.roll[1], score.roll[2]].sort().join(" ");
   };
