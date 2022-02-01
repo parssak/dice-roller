@@ -17,8 +17,6 @@ type Props = {
   socket: Socket;
 };
 
-
-
 export default function Game({ socket }: Props) {
   const { game, setDiceRoll, getDice, setHasRolled } = useGameState();
   const { turn, setTurn } = useTurn();
@@ -156,10 +154,15 @@ export default function Game({ socket }: Props) {
         </RecoilRoot>
       </Canvas>
       <div className="absolute inset-0 pointer-events-none">
-        <div className="container">
+        <div className="container flex flex-col h-full ">
           <p className="font-bold text-center text-6xl mt-24">
             {getDice()[0].value} {getDice()[1].value} {getDice()[2].value}
           </p>
+          <button
+            onClick={handleDiceRoll}
+            className="mt-auto mb-24 px-6 py-2 bg-blue-200 max-w-md mx-auto rounded hover:bg-blue-300 cursor-pointer pointer-events-auto">
+            Roll
+          </button>
         </div>
       </div>
     </>
