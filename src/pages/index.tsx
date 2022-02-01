@@ -72,6 +72,7 @@ export default function Home() {
     });
 
     socket.on("roll-result", (entries: any) => {
+      console.debug(entries);
       setScores(JSON.parse(entries));
     });
 
