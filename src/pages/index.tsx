@@ -86,6 +86,12 @@ export default function Home() {
     setJoined(true);
   };
 
+  const getScore = (turn_index: number) => {
+    const score = scores[turn_index];
+    if (!score) return undefined;
+    return [score.roll[0], score.roll[1], score.roll[2]].sort().join(" ");
+  };
+
   return (
     <>
       <main className="min-h-screen relative bg-green-50 text-3xl text-center">
@@ -117,9 +123,7 @@ export default function Home() {
                     {p._id === player?._id && `* `}
                     {p.name}
                   </p>
-                  <p>
-                    {scores[p.turn_index]?.roll[0]} {scores[p.turn_index]?.roll[1]} {scores[p.turn_index]?.roll[2]}
-                  </p>
+                  <p>{getScore(p.turn_index) ?? ""}</p>
                 </div>
               ))}
           </div>
